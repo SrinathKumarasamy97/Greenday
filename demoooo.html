@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punch In/Out</title>
+</head>
+<body>
+    <button onclick="punchIn()">Punch In</button>
+    <button onclick="punchOut()">Punch Out</button>
+
+    <script>
+        async function getLocation() {
+            return new Promise((resolve, reject) => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        resolve(`${position.coords.latitude},${position.coords.longitude}`);
+                    });
+                } else {
+                    reject('Geolocation is not supported by this browser.');
+                }
+            });
+        }
+
+        async function punchIn() {
+            const location = await getLocation();
+            const response = await fetch('/punch_in', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: 'user123', location: location }),
+            });
+            const data = await response.json();
+            alert(data.message);
+        }
+
+        async function punchOut() {
+            const location = await getLocation();
+            const response = await fetch('/punch_out', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: 'user123', location: location }),
+            });
+            const data = await response.json();
+            alert(data.message);
+        }
+    </script>
+</body>
+</html>
